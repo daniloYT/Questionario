@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Questionário de requisitos </title>
+<style>
+:root{--bg:#f5f3ee;--surface:#fffefb;--ink:#26302b;--muted:#5d6a63;--line:#d9d5c9;--accent:#2f6b57;--accent-ink:#fff;--soft:#e3eee8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171c19;--surface:#1f2622;--ink:#e8ece9;--muted:#9fada5;--line:#33403a;--accent:#6fb89c;--accent-ink:#11201a;--soft:#25322c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171c19;--surface:#1f2622;--ink:#e8ece9;--muted:#9fada5;--line:#33403a;--accent:#6fb89c;--accent-ink:#11201a;--soft:#25322c;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Georgia,"Source Serif 4","Times New Roman",serif}
+main{max-width:720px;margin:0 auto;padding:28px 18px 64px}
+h1{font-size:1.9rem;line-height:1.2;margin:0 0 8px}
+.lead{color:var(--muted);margin:0 0 20px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:8px 0 10px;z-index:5;font:14px system-ui,sans-serif;color:var(--muted)}
+.track{height:6px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .3s}
+section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;margin:18px 0}
+h2{font-size:1.2rem;margin:0 0 4px}
+.tag{font:13px system-ui,sans-serif;color:var(--muted);margin:0 0 12px}
+.ask{font:15px system-ui,sans-serif;margin:12px 0 10px}
+.choice{display:flex;gap:10px}
+.choice label{position:relative;flex:1;text-align:center;border:1.5px solid var(--line);border-radius:8px;padding:10px;cursor:pointer;font:15px system-ui,sans-serif}
+.choice input{position:absolute;opacity:0}
+.choice label:has(input:checked){background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.choice label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.q{margin:16px 0 0}
+.q label{display:block;font-weight:600;margin-bottom:6px}
+.q .n{color:var(--accent);margin-right:6px}
+textarea{width:100%;min-height:72px;resize:vertical;font:16px/1.4 system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
+textarea:focus{outline:3px solid var(--accent);outline-offset:1px}
+.choice.sm{max-width:240px}.choice.sm label{padding:8px}.hide{display:none}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+button{font:600 15px system-ui,sans-serif;padding:12px 18px;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button.alt{background:transparent;color:var(--accent)}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+#out{margin-top:16px;min-height:260px;font:14px/1.5 ui-monospace,Menlo,monospace}
+.note{font:14px system-ui,sans-serif;color:var(--muted);margin:8px 0 0}
+@media print{.bar,.actions,.choice,.note{display:none}section{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+<h1>Questionário de coleta de requisitos</h1>
+<p class="lead">Fundação que administra um Lar de Idosos. As seções essenciais já vêm abertas; nas opcionais, responda “Sim” para ver as perguntas.</p>
+<div class="bar"><span id="prog">0 de 0 perguntas respondidas</span><div class="track"><div class="fill" id="fill"></div></div></div>
+<div id="form"></div>
+<div class="actions">
+<button id="gen">Gerar resumo das respostas</button>
+<button class="alt" id="prt">Imprimir / salvar em PDF</button>
+</div>
+<textarea id="out" class="hide" readonly aria-label="Resumo das respostas"></textarea>
+<p class="note hide" id="msg"></p>
+</main>
+<script>
+var S=[
+{t:"Informações da Fundação",o:0,q:["Qual é o nome da fundação?","Qual é a finalidade e quais serviços a fundação oferece?","Quantos idosos são atendidos atualmente?","Quais setores ou áreas da fundação utilizarão o sistema?","A fundação já utiliza algum sistema, planilha ou outro método para organizar suas informações?"]},
+{t:"Cadastro dos idosos",o:1,q:["Quais informações precisam ser cadastradas sobre cada idoso?","~É necessário cadastrar familiares, responsáveis ou contatos de emergência?","~É necessário registrar documentos do idoso?","~É necessário registrar a data de entrada e, quando ocorrer, a data de saída?","~É necessário armazenar documentos ou arquivos relacionados ao idoso?","Quem poderá cadastrar, consultar e alterar essas informações?"]},
+{t:"Acompanhamento dos idosos",o:1,q:["Quais informações sobre a rotina dos idosos precisam ser registradas?","~É necessário registrar atividades realizadas pelos idosos?","~É necessário registrar alimentação e refeições?","~É necessário registrar ocorrências ou acontecimentos importantes?","~É necessário registrar consultas, exames e atendimentos realizados?","Quem será responsável por realizar esses registros?"]},
+{t:"Medicamentos e cuidados",o:1,q:["~É necessário cadastrar os medicamentos utilizados por cada idoso?","~É necessário controlar horários e doses dos medicamentos?","~É necessário registrar a administração de cada medicamento?","~O sistema deve emitir algum alerta relacionado aos horários dos medicamentos?","~É necessário registrar informações sobre cuidados especiais de cada idoso?"]},
+{t:"Funcionários e colaboradores",o:1,q:["Quais informações precisam ser cadastradas sobre os funcionários?","~É necessário cadastrar voluntários ou outros colaboradores?","~É necessário controlar horários, escalas ou turnos de trabalho?","~É necessário registrar as funções exercidas por cada funcionário?","~O sistema deverá possuir diferentes níveis de acesso para funcionários e administradores?"]},
+{t:"Recursos e doações",o:1,q:["~A fundação recebe doações ou outros tipos de recursos?","Quais tipos de doações precisam ser registrados?","~É necessário registrar os dados do doador?","~É necessário emitir recibos ou comprovantes?","~É necessário gerar relatórios das doações recebidas?","~Existem outras fontes de recursos que precisam ser registradas?"]},
+{t:"Estoque e patrimônio",o:1,q:["~A fundação precisa controlar estoque de alimentos, medicamentos e produtos de higiene?","Quais produtos precisam ser controlados?","~É necessário registrar entradas e saídas de produtos?","~É necessário controlar a validade dos produtos?","~É necessário emitir alertas quando um produto estiver acabando ou próximo do vencimento?","~A fundação precisa controlar seus bens e patrimônios, como móveis, equipamentos e veículos?"]},
+{t:"Financeiro e administrativo",o:1,q:["~É necessário controlar receitas e despesas da fundação?","Quais tipos de despesas precisam ser registradas?","~É necessário registrar contas a pagar e a receber?","~É necessário acompanhar os recursos destinados especificamente ao Lar de Idosos?","Quais informações financeiras precisam aparecer nos relatórios?"]},
+{t:"Convênios e parcerias",o:1,q:["~A fundação possui convênios ou parcerias com outras instituições?","~É necessário cadastrar e acompanhar esses convênios?","~É necessário controlar prazos, documentos e obrigações relacionados aos convênios?","~É necessário gerar relatórios para prestação de contas?"]},
+{t:"Relatórios",o:1,q:["Quais relatórios a fundação precisa gerar?","~É necessário gerar relatórios sobre os idosos atendidos?","~É necessário gerar relatórios financeiros?","~É necessário gerar relatórios de estoque?","~É necessário gerar relatórios de funcionários e atividades?","~É necessário gerar relatórios de doações e recursos recebidos?","~É necessário exportar os relatórios para PDF ou Excel?"]},
+{t:"Segurança e acesso",o:0,q:["~O sistema deverá possuir login e senha?","Quais informações cada tipo de usuário poderá acessar?","~É necessário registrar quem realizou alterações nas informações?","~É necessário realizar backup periódico dos dados?","~Existem informações que devem ter acesso restrito?"]},
+{t:"Necessidades gerais do sistema",o:0,q:["Quais são os principais problemas que a fundação deseja resolver com o sistema?","Quais funcionalidades são consideradas indispensáveis?","Quais funcionalidades poderiam ser adicionadas futuramente?","~O sistema deverá ser acessado por computador, celular ou ambos?","Existe alguma outra necessidade específica da fundação que não foi abordada nas perguntas?"]}
+];
+var f=document.getElementById("form"),n=0,html="";
+S.forEach(function(s,i){
+ html+='<section id="s'+i+'"><h2>'+(i+1)+'. '+s.t+'</h2><p class="tag">'+(s.o?'Seção opcional':'Seção essencial')+'</p>';
+ if(s.o){html+='<p class="ask">A fundação precisa deste tópico no sistema?</p><div class="choice"><label><input type="radio" name="o'+i+'" value="1">Sim</label><label><input type="radio" name="o'+i+'" value="0">Não</label></div>'}
+ html+='<div class="qs'+(s.o?' hide':'')+'" id="q'+i+'">';
+ s.q.forEach(function(q){n++;var y=q.charAt(0)==="~";if(y)q=q.slice(1);
+  if(y)html+='<div class="q"><label><span class="n">'+n+'.</span>'+q+'</label><div class="choice sm"><label><input type="radio" name="a'+n+'" value="Sim">Sim</label><label><input type="radio" name="a'+n+'" value="Não">Não</label></div></div>';
+  else html+='<div class="q"><label for="a'+n+'"><span class="n">'+n+'.</span>'+q+'</label><textarea id="a'+n+'"></textarea></div>'});
+ html+='</div></section>';
+});
+html+='<section><h2>Para finalizar</h2><div class="q"><label for="sug">Mais alguma sugestão?</label><textarea id="sug"></textarea></div></section>';
+f.innerHTML=html;
+function val(k){var r=document.querySelector('input[name=a'+k+']:checked');if(r)return r.value;var t=document.getElementById('a'+k);return t?t.value.trim():""}
+var off=[];S.forEach(function(s,i){off[i]=i?off[i-1]+S[i-1].q.length:0});
+function upd(){
+ var all=0,done=0;
+ S.forEach(function(s,i){
+  var on=!s.o||(document.querySelector('input[name=o'+i+']:checked')||{}).value==="1";
+  if(on)s.q.forEach(function(q,k){all++;if(val(off[i]+k+1))done++});
+ });
+ document.getElementById("prog").textContent=done+" de "+all+" perguntas respondidas";
+ document.getElementById("fill").style.width=(all?done/all*100:0)+"%";
+}
+S.forEach(function(s,i){
+ if(!s.o)return;
+ document.querySelectorAll('input[name=o'+i+']').forEach(function(r){
+  r.addEventListener("change",function(){document.getElementById("q"+i).classList.toggle("hide",r.value!=="1");upd()});
+ });
+});
+f.addEventListener("input",upd);upd();
+var out=document.getElementById("out"),msg=document.getElementById("msg");
+document.getElementById("gen").onclick=function(){
+ var t="QUESTIONÁRIO DE REQUISITOS – FUNDAÇÃO / LAR DE IDOSOS\n";
+ S.forEach(function(s,i){
+  var c=(document.querySelector('input[name=o'+i+']:checked')||{}).value;
+  t+="\n"+(i+1)+". "+s.t.toUpperCase()+"\n";
+  if(s.o&&c!=="1"){t+=(c==="0"?"(Não necessário)":"(Não respondido)")+"\n";return}
+  s.q.forEach(function(q,k){
+   var id=off[i],v=val(id+k+1);
+   t+="\n"+(id+k+1)+". "+q.replace(/^~/,"")+"\nR: "+(v||"—")+"\n";
+  });
+ });
+ t+="\nMAIS ALGUMA SUGESTÃO?\n"+(document.getElementById("sug").value.trim()||"—")+"\n";
+ out.value=t;out.classList.remove("hide");out.scrollIntoView({behavior:"smooth"});
+ try{navigator.clipboard.writeText(t).then(function(){msg.textContent="Resumo copiado para a área de transferência.";msg.classList.remove("hide")},function(){msg.textContent="Selecione o texto acima e copie.";msg.classList.remove("hide")})}catch(e){msg.textContent="Selecione o texto acima e copie.";msg.classList.remove("hide")}
+};
+document.getElementById("prt").onclick=function(){window.print()};
+</script>
+</body>
+</html>
+)};
+</script>
+</body>
+</html>
